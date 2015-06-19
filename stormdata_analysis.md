@@ -195,13 +195,14 @@ A visualization of the data shows that tornados have the greatest impact on huma
 
 
 ```r
-      ggplot(data = casualties.df, aes(y=Casualties, x=EVTYPE, fill = EVTYPE)) +
+cas.plot <- ggplot(data = casualties.df, aes(y=Casualties, x=EVTYPE, fill = EVTYPE)) +
       geom_bar(stat="identity") +
       theme(axis.text.x = element_text(angle = 70, size = 10, vjust = 0.5), 
             plot.title = element_text(size = 18, face="bold", vjust = 2)) +
       labs(title = "Top 10% of Casualty-inducing\n Storm Events in USA, 1950-2011") +
       labs(x = "") +
       labs(y = "Total Casualties (Injuries & Fatalities)")
+print(cas.plot)
 ```
 
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
@@ -216,7 +217,7 @@ A visualization of this data confirms that flood damage is the worst, by far.  I
 
 
 ```r
-ggplot(data = damages.df, aes(y=total.damages, x=EVTYPE, fill = EVTYPE)) +
+dmgs.plot <- ggplot(data = damages.df, aes(y=total.damages, x=EVTYPE, fill = EVTYPE)) +
       geom_bar(stat="identity") +
       theme(axis.text.x = element_blank(),
             axis.ticks.x = element_blank(),
@@ -224,6 +225,8 @@ ggplot(data = damages.df, aes(y=total.damages, x=EVTYPE, fill = EVTYPE)) +
       labs(title = "Top 10% of Damaging Storm Events\n in USA, 1950-2011") +
       labs(x = "") +
       labs(y = "Total Damages ($USD)")
+
+print(dmgs.plot)
 ```
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
