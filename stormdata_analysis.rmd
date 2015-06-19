@@ -83,7 +83,7 @@ Starting from `tidy.storm`:
 5. Group the data by `EVTYPE`, summarize for the sum of damages, and arrange in descending order.
 6. Look at the events that constitute the top 10% of damages.
 
-```{r build damages.df, cache = TRUE}
+```{r build damages.df}
 ## Subset for non-zero values
 damages.df <- tidy.storm[which(tidy.storm$PROPDMG > 0 | tidy.storm$CROPDMG > 0),] 
 
