@@ -126,14 +126,14 @@ ________________________________________________________________________________
 A visualization of the data shows that tornados have the greatest impact on human health, followed by floods.
 
 ```{r}
-      ggplot(data = casualties.df, aes(y=Casualties, x=EVTYPE, fill = EVTYPE)) +
+cas.plot <- ggplot(data = casualties.df, aes(y=Casualties, x=EVTYPE, fill = EVTYPE)) +
       geom_bar(stat="identity") +
       theme(axis.text.x = element_text(angle = 70, size = 10, vjust = 0.5), 
             plot.title = element_text(size = 18, face="bold", vjust = 2)) +
       labs(title = "Top 10% of Casualty-inducing\n Storm Events in USA, 1950-2011") +
       labs(x = "") +
       labs(y = "Total Casualties (Injuries & Fatalities)")
-
+print(cas.plot)
 
 ```
 
@@ -146,7 +146,7 @@ The data shows that tornados - events that are difficult to predict - are a majo
 A visualization of this data confirms that flood damage is the worst, by far.  In general, high winds and flooding conditions caused the greatest damage.  Seeing hail in the top 10% was a surprise.
 
 ```{r}
-ggplot(data = damages.df, aes(y=total.damages, x=EVTYPE, fill = EVTYPE)) +
+dmgs.plot <- ggplot(data = damages.df, aes(y=total.damages, x=EVTYPE, fill = EVTYPE)) +
       geom_bar(stat="identity") +
       theme(axis.text.x = element_blank(),
             axis.ticks.x = element_blank(),
@@ -154,6 +154,8 @@ ggplot(data = damages.df, aes(y=total.damages, x=EVTYPE, fill = EVTYPE)) +
       labs(title = "Top 10% of Damaging Storm Events\n in USA, 1950-2011") +
       labs(x = "") +
       labs(y = "Total Damages ($USD)")
+
+print(dmgs.plot)
 ```
 
 When analyzing the data, it occured to me to group the flood event types together, or the hurricane events together.  One major issue with that method is that it may not always be reasonable to group two events that happen to have the same word in them. Are flash floods the same as river floods?  Is disaster planning or are the risk factors for each the same?  To answer these questions for every unique event is beyond the scope of this investigation.  Rather, these results tell a story that is consisent with the findings of question 1:  Generally speaking, flood and heavy wind events cause the most destruction!  Further analysis is required to generate more specific results.
