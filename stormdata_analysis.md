@@ -22,7 +22,8 @@ ________________________________________________________________________________
 
 Load the required libraries and read data into R.
 
-```{r message = F, warning = F}
+
+```r
 library(dplyr)
 library(ggplot2)
 library(gridExtra)
@@ -33,13 +34,31 @@ raw.storm <- read.csv("repdata-data-StormData.csv",
 
 To start with, select only those columns relevant to the inquiries.  We won't need start/end times, or remarks about a particular storm.  Clean the data by changing the variable classes to make them easier to work with, and remove any missing values.
 
-```{r}
+
+```r
 tidy.storm <- raw.storm[, c(2,8,23:28)]  ## Select relevant columns
 tidy.storm$BGN_DATE <- as.Date(tidy.storm$BGN_DATE, format = "%m/%d/%Y")  ## Change classes
 tidy.storm$PROPDMGEXP <- as.character(tidy.storm$PROPDMGEXP)
 tidy.storm$CROPDMGEXP <- as.character(tidy.storm$CROPDMGEXP)
 tidy.storm <- na.omit(tidy.storm)
 head(tidy.storm)
+```
+
+```
+##          BGN_DATE                    EVTYPE FATALITIES INJURIES PROPDMG
+## 187566 1995-10-04 HURRICANE OPAL/HIGH WINDS          2        0     0.1
+## 187571 1994-06-26        THUNDERSTORM WINDS          0        0     5.0
+## 187581 1995-08-03            HURRICANE ERIN          0        0    25.0
+## 187583 1995-10-03            HURRICANE OPAL          0        0    48.0
+## 187584 1995-10-04            HURRICANE OPAL          0        0    20.0
+## 187653 1994-03-24        THUNDERSTORM WINDS          0        0    50.0
+##        PROPDMGEXP CROPDMG CROPDMGEXP
+## 187566          B      10          M
+## 187571          M     500          K
+## 187581          M       1          M
+## 187583          M       4          M
+## 187584          m      10          m
+## 187653          K      50          K
 ```
 
 ### Impact on Human Health
@@ -54,7 +73,8 @@ Beginning with the `tidy.storm` data set:
 4. Group the data by `EVTYPE`, summarize for the sum of `Casualties`, and arrange in descending order.
 5. Look at events at constitute the top 10% of casualties.
 
-```{r}
+
+```r
 ## Subset for non-zero values
 casualties.df <- tidy.storm[which(tidy.storm$FATALITIES > 0 | tidy.storm$INJURIES > 0),]
 casualties.df <- casualties.df[,c(1,2,3,4)]  ## Drop columns
@@ -64,9 +84,29 @@ casualties.df <- summarise(casualties.df, sum(Casualties)) ## Sum casualties by 
 colnames(casualties.df)[2] <- "Casualties"
 casualties.df <- arrange(casualties.df, desc(Casualties))  ## Arrange, descending
 quantile(casualties.df$Casualties, probs = 0.90)  ## Find top 10th percentile
+```
+
+```
+##    90% 
+## 1066.8
+```
+
+```r
 casualties.df <- casualties.df[casualties.df$Casualties >= 1066.8,]
 print(casualties.df)
+```
 
+```
+## Source: local data frame [7 x 2]
+## 
+##              EVTYPE Casualties
+## 1           TORNADO      13024
+## 2             FLOOD       6756
+## 3         ICE STORM       1629
+## 4 THUNDERSTORM WIND       1542
+## 5              HEAT       1376
+## 6         LIGHTNING       1183
+## 7    EXCESSIVE HEAT       1070
 ```
 
 ### Impact on Economic Conditions
@@ -83,7 +123,8 @@ Starting from `tidy.storm`:
 5. Group the data by `EVTYPE`, summarize for the sum of damages, and arrange in descending order.
 6. Look at the events that constitute the top 10% of damages.
 
-```{r build damages.df, cache = TRUE}
+
+```r
 ## Subset for non-zero values
 damages.df <- tidy.storm[which(tidy.storm$PROPDMG > 0 | tidy.storm$CROPDMG > 0),] 
 
@@ -115,8 +156,35 @@ damages.df <- summarise(damages.df, sum(total.damages)) ## Sum total damages by 
 colnames(damages.df)[2] <- "total.damages" 
 damages.df <- arrange(damages.df, desc(total.damages))  ## Arrange, descending
 quantile(damages.df$total.damages, probs = 0.90) ## Find the 10th percentile
+```
+
+```
+##        90% 
+## 2129941727
+```
+
+```r
 damages.df <- damages.df[damages.df$total.damages >= 2129941727,]
 print(damages.df)
+```
+
+```
+## Source: local data frame [13 x 2]
+## 
+##               EVTYPE total.damages
+## 1              FLOOD  138007444500
+## 2  HURRICANE/TYPHOON   29348167800
+## 3            TORNADO   16570326363
+## 4          HURRICANE   12405268000
+## 5        RIVER FLOOD   10108369000
+## 6               HAIL   10045180037
+## 7        FLASH FLOOD    8715885183
+## 8          ICE STORM    5925150850
+## 9   STORM SURGE/TIDE    4641493000
+## 10 THUNDERSTORM WIND    3813647990
+## 11          WILDFIRE    3684468370
+## 12         HIGH WIND    3057666640
+## 13    HURRICANE OPAL    2157000030
 ```
 
 ### Results
@@ -125,7 +193,8 @@ ________________________________________________________________________________
 
 A visualization of the data shows that tornados have the greatest impact on human health, followed by floods.
 
-```{r}
+
+```r
       ggplot(data = casualties.df, aes(y=Casualties, x=EVTYPE, fill = EVTYPE)) +
       geom_bar(stat="identity") +
       theme(axis.text.x = element_text(angle = 70, size = 10, vjust = 0.5), 
@@ -133,9 +202,9 @@ A visualization of the data shows that tornados have the greatest impact on huma
       labs(title = "Top 10% of Casualty-inducing\n Storm Events in USA, 1950-2011") +
       labs(x = "") +
       labs(y = "Total Casualties (Injuries & Fatalities)")
-
-
 ```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
 
 When calculating the 'impact on human health', a fatality is far worse than an injury.  This was not factored into the analysis, and is not represented in the results.  However, this data can still be useful because it gives a picture of the overall impact.  
 
@@ -145,7 +214,8 @@ The data shows that tornados - events that are difficult to predict - are a majo
 
 A visualization of this data confirms that flood damage is the worst, by far.  In general, high winds and flooding conditions caused the greatest damage.  Seeing hail in the top 10% was a surprise.
 
-```{r}
+
+```r
 ggplot(data = damages.df, aes(y=total.damages, x=EVTYPE, fill = EVTYPE)) +
       geom_bar(stat="identity") +
       theme(axis.text.x = element_blank(),
@@ -155,6 +225,8 @@ ggplot(data = damages.df, aes(y=total.damages, x=EVTYPE, fill = EVTYPE)) +
       labs(x = "") +
       labs(y = "Total Damages ($USD)")
 ```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
 
 When analyzing the data, it occured to me to group the flood event types together, or the hurricane events together.  One major issue with that method is that it may not always be reasonable to group two events that happen to have the same word in them. Are flash floods the same as river floods?  Is disaster planning or are the risk factors for each the same?  To answer these questions for every unique event is beyond the scope of this investigation.  Rather, these results tell a story that is consisent with the findings of question 1:  Generally speaking, flood and heavy wind events cause the most destruction!  Further analysis is required to generate more specific results.
 
